@@ -1,5 +1,3 @@
-from os import lseek
-from re import T
 import requests
 from bs4 import BeautifulSoup
 import numpy as np 
