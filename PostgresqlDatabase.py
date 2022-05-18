@@ -25,8 +25,12 @@ class PostgresqlDatabase():
             cols.append(first)
         print(cols)
         for col in cols:
-            print(col)
             sqlQuery = 'DROP TABLE IF EXISTS ' + col +  ";\n"
+            self.cursor.execute(sqlQuery)
+            self.conn.commit()
+            
+        for col in cols:
+            print(col)
             sqlQuery += 'CREATE TABLE ' + col + ' (' + '\n'
             sqlQuery += 'id serial PRIMARY KEY, \n'
             sqlQuery += 'date DATE NOT NULL, \n' 
@@ -34,12 +38,14 @@ class PostgresqlDatabase():
             sqlQuery += "open_price REAL NOT NULL,\n"
             sqlQuery += "close_price REAL NOT NULL \n"
 
-            sqlQuery = sqlQuery[:-2]
-            sqlQuery += ");"
+            #sqlQuery = sqlQuery[:-2]
+            sqlQuery += "); \n"
         print(sqlQuery)
         self.cursor.execute(sqlQuery)
         self.conn.commit()
         self.cursor.close()
+
+        
 
 
 
