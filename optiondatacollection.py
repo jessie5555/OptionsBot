@@ -27,9 +27,13 @@ class optiondatacollection:
     def historicals(self,ticker, per):
         tickerInfo = yf.Ticker(ticker)
         self.data = tickerInfo.history(period=per)
-        
+
+    def test(self, ticker, date, strike):
+        teststock = rs.options.get_option_historicals(ticker, date, strike, "call", interval="hour", span="week", bounds="regular")
+        print(teststock)
+
+
     def option(self, ticker):
-        print(self.data)
         # alright so this enumerations kinda weird, I dont want to fix it. But,
         # so the row is a tuple with two things in it, the first is the timestamp
         # and the second is literally THE REST OF THE DATA
@@ -40,19 +44,27 @@ class optiondatacollection:
                 pass
             date = str(row[0]).split(' ')
             date = date[0]
+            #date = date.split('-')
+            print(date)
             strike = (row[1][0] + row[1][3]) / 2   # this was just a monkey brain way of finding a strike price 
-            
+            strike = round(strike/5)*5
+            strike = str(strike)
+            print(strike)
             
             try: 
                 spy = rs.options.get_option_historicals(ticker, date, strike,'call', interval='hour',span='week', bounds='regular')
                 print(spy)
+                break
 
             except:
                 pass
 
-#
+#Je
 
 
 rob = optiondatacollection()
-rob.historicals('SPY', '6mo')
-rob.option('SPY')
+rob.test("TSLA", "2022-05-20", "765")
+#rob.historicals('SPY', '6mo')
+#rob.option('SPY')
+
+
