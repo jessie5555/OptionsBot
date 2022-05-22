@@ -1,10 +1,15 @@
 import robin_stocks.robinhood as rs
 import os
 import yfinance as yf
-import pandas
+import pandas as pd
+
+# I dont know if I want to do this yet....
+class date:
+    def __init__(self,year, month, day):
+       pass 
 
 
-class optiondatacollection:
+class optiondatacollection():
     def __init__(self):
         self.robin_usr = os.environ.get("robinhood_username")
         self.robin_pass = os.environ.get("robinhood_password")
@@ -32,39 +37,9 @@ class optiondatacollection:
         teststock = rs.options.get_option_historicals(ticker, date, strike, "call", interval="hour", span="week", bounds="regular")
         print(teststock)
 
-
-    def option(self, ticker):
-        # alright so this enumerations kinda weird, I dont want to fix it. But,
-        # so the row is a tuple with two things in it, the first is the timestamp
-        # and the second is literally THE REST OF THE DATA
-        # So you need to iterate through the second tuple as a 2d array. Noted...
-        for id, row  in enumerate(self.data.iterrows()):
-            
-            if id == 0:
-                pass
-            date = str(row[0]).split(' ')
-            date = date[0]
-            #date = date.split('-')
-            print(date)
-            strike = (row[1][0] + row[1][3]) / 2   # this was just a monkey brain way of finding a strike price 
-            strike = round(strike/5)*5
-            strike = str(strike)
-            print(strike)
-            
-            try: 
-                spy = rs.options.get_option_historicals(ticker, date, strike,'call', interval='hour',span='week', bounds='regular')
-                print(spy)
-                break
-
-            except:
-                pass
-
-#Je
-
-
-rob = optiondatacollection()
-rob.test("TSLA", "2022-05-20", "765")
-#rob.historicals('SPY', '6mo')
-#rob.option('SPY')
-
+    def Rebecca_Black(self, year): # returns all fridays in a year, this was an appropriate function name trust me
+        #you know what this is my project, Im doing this for fun! I dont have to obey any standards. This is going to work so well
+        # that I wont need a job anyway! hahah checkmate future employer. not that youre going to read this anyway.
+        return pd.date_range(start=str(year), end=str(year+1),
+                freq='W-FRI').strftime('%m/%d/%Y').tolist()[:52]  # also I stole this code thanks:https://gist.github.com/isaacarnault/7c87a09ce6adc0d88f245037b3bbd56c
 
