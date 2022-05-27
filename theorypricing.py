@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 from scipy.stats import norm
 import yfinance as yf
+import matplotlib.pyplot as plt
+
 
 
 
@@ -25,26 +27,21 @@ class maths:
         tickerInfo = yf.Ticker(ticker)
         self.data = tickerInfo.history(period=per)
     # for purposes
-    def stock_volatility(self,ticker):
+    def population(self,ticker,strike):
         self.hist = yf.download(ticker, start='2015-1-1', end='2022-01-01')
         self.hist['log_return'] = np.log(self.hist['Close'] / self.hist['Close'].shift(1))
         self.hist['Volatility'] = self.hist['log_return'].rolling(window=252).std() * np.sqrt(252) 
-        return self.hist[252:]
+        self.hist = self.hist[252:]
+        stupidlist = []
+        self.hist = self.hist.reset_index()
 
-    def add_time_till_experation(self, ticker):
-        hist = maths().stock_volatility(ticker)
-        days = 60
-        dumb = np.zeros(len(hist))
-        for i in range(len(hist)):
-            j = i % 30 
-            
-        i = 0 
-        while i != len(hist):
-            for j in range(30,1,-1):
-                hist['TimeToExperation'][i] = j
-        return hist
+        self.hist['TimeToExperation'] = (self.hist['Date'].dt.dayofweek + 4 - 30 ) * -1
+        # this is hardcoded pls remember, it adds 4 days. WILL NOT SCALE BRO
+        #self.hist['TimeToExperation'] = self.hist['Date']
 
-    
+        self.hist['Monthly Call Price: ' + str(strike)] = maths().BS_Call(self.hist['Low'], strike,
+                                         0,self.hist['TimeToExperation'],self.hist['Volatility'])
+        return self.hist
 
 
 class theorypricing(maths):
@@ -63,7 +60,14 @@ class theorypricing(maths):
 
     
 #awe = maths().stock_volatility('SPY')
-print(maths().add_time_till_experation('SPY'))
+option = maths().population('SPY', 400)
+print(option)
+plt.xlabel("time")
+plt.ylabel("option price")
+plt.title("Graph kuuuun")
+plt.plot(option["Monthly Call Price: 400"])
+plt.plot(option['Low'])
+plt.show()
 #re = theorypricing.optionPrice('SPY','C')
 
 
